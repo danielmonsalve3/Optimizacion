@@ -1,4 +1,5 @@
-Proyecto Optimización
+Proyecto Optimización 
+
 Optimización Numérica
 
 Este repositorio contiene la implementación de diferentes métodos de optimización numérica utilizando Python. Los algoritmos permiten encontrar máximos o mínimos de funciones matemáticas asi como sus raíces mediante métodos numericos
