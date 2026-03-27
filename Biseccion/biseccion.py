@@ -1,13 +1,14 @@
+# METODO DE BISECCION 
 import math
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sympy import symbols, sympify, lambdify
 
-# ── Ingreso interactivo de la función ────────────────────────────────
+#  Ingreso interactivo de la función
 x = symbols('x')
 while True:
-    funcion_str = input("Ingresa f(x): ").strip()
+    funcion_str = input("Ingresa f(x) (ej. 3*x**2 - 120*x + 100): ").strip()
     try:
         expr = sympify(funcion_str)
         f    = lambdify(x, expr, modules=['numpy', 'math'])
@@ -17,7 +18,7 @@ while True:
     except Exception as e:
         print(f"  ✗ Función inválida: {e}. Inténtalo de nuevo.")
 
-# ── Método de bisección con tabla ────────────────────────────────────
+# Método de bisección con tabla
 def biseccion(f, xl, xu, tolerancia):
 
     if f(xl) * f(xu) > 0:
@@ -49,14 +50,15 @@ def biseccion(f, xl, xu, tolerancia):
                          columns=["Iteración", "xl", "xu", "xr", "f(xr)", "Error"])
     return xr, tabla
 
-# ── Parámetros y ejecución ───────────────────────────────────────────
-x_lower    = int(input("Ingrese el limite inferior: "))
-x_upper    =  int(input("Ingrese el limite superior: "))
+# Parámetros y ejecución 
+x_lower    = float(input("Ingrese el limite inferior: "))
+x_upper    =  float(input("Ingrese el limite superior: "))
 tolerancia =  0.000
 
 raiz, tabla = biseccion(f, x_lower, x_upper, tolerancia)
 
-print("Raíz aproximada:", raiz)
+print("\n --- METODO DE BISECCION ---")
+print("\nRaíz aproximada:", raiz)
 print(tabla)
 
 
@@ -93,53 +95,24 @@ ax.grid(True, linestyle='--', alpha=0.4)
 plt.tight_layout()
 plt.show()
 
-import matplotlib.pyplot as plt
-import matplotlib.ticker as mticker
-
 errores = tabla["Error"].dropna()
 
-fig, ax = plt.subplots(figsize=(10, 5))
+# Crear la figura con un tamaño estándar
+fig, ax = plt.subplots(figsize=(8, 4))
 
-# Fondo
-fig.patch.set_facecolor("#0f0f1a")
-ax.set_facecolor("#0f0f1a")
-
-# Línea principal con gradiente de color usando scatter
+# Eje X
 x = range(1, len(errores) + 1)
-ax.plot(x, errores, color="#00c9ff", linewidth=2, zorder=3)
-ax.fill_between(x, errores, alpha=0.15, color="#00c9ff")
 
-# Puntos destacados
-ax.scatter(x, errores, color="#ffffff", s=40, zorder=5, linewidths=1.2, edgecolors="#00c9ff")
+# Línea principal básica con marcadores de puntos
+ax.plot(x, errores, color="blue", marker="o", markersize=4, linewidth=1.5)
 
-# Rejilla sutil
-ax.grid(True, linestyle="--", linewidth=0.5, color="#ffffff22", zorder=0)
-ax.set_axisbelow(True)
+# Rejilla
+ax.grid(True, linestyle="--", alpha=0.6)
 
-# Ejes
-ax.spines[["top", "right"]].set_visible(False)
-ax.spines[["left", "bottom"]].set_color("#ffffff33")
-ax.tick_params(colors="#aaaaaa", labelsize=10)
-
-# Etiquetas y título
-ax.set_title("Error vs Iteraciones", fontsize=15, fontweight="bold",
-             color="#ffffff", pad=16)
-ax.set_xlabel("Iteración", fontsize=11, color="#aaaaaa", labelpad=10)
-ax.set_ylabel("Error relativo", fontsize=11, color="#aaaaaa", labelpad=10)
-
-# Formato de eje Y en notación científica si los valores son muy pequeños
-ax.yaxis.set_major_formatter(mticker.ScalarFormatter(useMathText=True))
-ax.ticklabel_format(style="sci", axis="y", scilimits=(0, 0))
-ax.yaxis.get_offset_text().set_color("#aaaaaa")
-
-# Anotación del último error
-ultimo_x = list(x)[-1]
-ultimo_y = errores.iloc[-1]
-ax.annotate(f"{ultimo_y:.2e}",
-            xy=(ultimo_x, ultimo_y),
-            xytext=(ultimo_x - len(x) * 0.08, ultimo_y * 1.3),
-            fontsize=9, color="#00c9ff",
-            arrowprops=dict(arrowstyle="->", color="#00c9ff", lw=1.2))
+# Etiquetas y título estándar
+ax.set_title("Error vs Iteraciones", fontsize=13, fontweight="bold")
+ax.set_xlabel("Iteración", fontsize=11)
+ax.set_ylabel("Error relativo", fontsize=11)
 
 plt.tight_layout()
 plt.show()

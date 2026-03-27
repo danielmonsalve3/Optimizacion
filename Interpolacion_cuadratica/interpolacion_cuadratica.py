@@ -6,22 +6,25 @@ import pandas as pd
 
 # INGRESO DE DATOS
 x = sp.symbols('x')
-
-funcion_str = input("Ingrese la función f(x): ")
+#  leer la función matemática que el usuario escribe como texto
+funcion_str = input("Ingrese la función f(x) (ej. 2*sin(x)-x**2/10): ")
 tipo = input("¿Desea maximizar o minimizar? (max/min): ")
 
 f_sym = sp.sympify(funcion_str)
+# Transforma esa expresión algebraica en una función
 f = sp.lambdify(x, f_sym, 'numpy')
 
 # Puntos iniciales
+# Pide tres puntos ($x_0$, $x_1$, $x_2$) que idealmente deben encerrar el punto óptimo. 
+# También pide la tolerancia (el error máximo permitido) y el límite de iteraciones.
 x0 = float(input("Ingrese x0: "))
 x1 = float(input("Ingrese x1: "))
 x2 = float(input("Ingrese x2: "))
 
 tol = float(input("Tolerancia: "))
 max_iter = int(input("Máximo número de iteraciones: "))
-
-# Si es maximización se multiplica por -1
+# El algoritmo de interpolación parabólica está diseñado por defecto para buscar mínimos.
+# Si el usuario quiere buscar un máximo  -> Si es maximización se multiplica por -1
 if tipo == "max":
     def f_eval(x):
         return -f(x)
@@ -31,7 +34,7 @@ else:
 
 
 # METODO INTERPOLACION PARABOLICA
-
+# aplica la fórmula de la interpolación parabólica para encontrar un nuevo punto (x_3)
 tabla = []
 errores = []
 
@@ -56,7 +59,8 @@ for i in range(max_iter):
     errores.append(error)
 
     tabla.append([i, x0, x1, x2, x3, error])
-
+    #  Compara la distancia entre el nuevo punto x_3 y el punto anterior x_2.
+    #  Si esta diferencia es menor a la tolerancia (tol), el bucle se rompe con break porque ya se alcanzó la precisión deseada.
     if error < tol:
         break
 
@@ -67,6 +71,7 @@ for i in range(max_iter):
 # TABLA DE ITERACIONES
 
 df = pd.DataFrame(tabla, columns=["Iter", "x0", "x1", "x2", "x3", "Error"])
+print("\n--- METODO DE INTERPOLACION_CUADRATICA ---")
 print("\nTabla de Iteraciones:")
 print(df)
 
@@ -109,7 +114,7 @@ plt.show()
 
 
 # GRAFICA DE LA FUNCION
-
+# Dibuja la curva real de f(x) tomando un rango de valores alrededor del resultado. 
 x_vals = np.linspace(resultado - 5, resultado + 5, 400)
 y_vals = f(x_vals)
 y_opt  = f(resultado)

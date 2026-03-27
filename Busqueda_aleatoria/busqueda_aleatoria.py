@@ -1,37 +1,42 @@
+# METODO BUSQUEDA ALEATORIA
 import sympy as sp
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-
+# Axes3D para poder graficar en tres dimensiones.
 
 # INGRESO DE DATOS
-
+# Usa sympy para leer tu función de dos variables
 x, y = sp.symbols('x y')
 
 funcion_str = input("Ingrese la función f(x,y) (ej. x**2 + y**2 -2*x - 4*y +5): ")
 tipo = input("¿Desea maximizar o minimizar? (max/min): ")
-
+# lambdify para convertirla en una función de Python que recibe dos parámetros: f(X, Y).
 f_sym = sp.sympify(funcion_str)
 f = sp.lambdify((x, y), f_sym, 'numpy')
-
+# En lugar de un solo intervalo, se pide definir un "rectángulo"
+# o área de búsqueda ingresando los límites mínimos y máximos tanto para x (xl, xu) como para y (yl, yu).
 # Rangos
-xl = float(input("Ingrese x mínimo: "))
-xu = float(input("Ingrese x máximo: "))
-yl = float(input("Ingrese y mínimo: "))
-yu = float(input("Ingrese y máximo: "))
-
+xl = float(input("Ingrese x mínimo: "))  # 0.5  
+xu = float(input("Ingrese x máximo: "))  # 1.5
+yl = float(input("Ingrese y mínimo: "))  # 1.5
+yu = float(input("Ingrese y máximo: "))  # 2.5
+# n_iter significa exactamente cuántos puntos aleatorios se quiere probar.
 n_iter = int(input("Número de iteraciones: "))
 
 # BUSQUEDA ALEATORIA
-
+# Para que sea funcional, a menudo requiere miles o decenas de miles de iteraciones.
 tabla = []
 
 if tipo == "max":
     mejor_valor = -1e9
 else:
     mejor_valor = 1e9
-
+# En cada paso, usa np.random.rand() para generar dos números al azar entre 0 y 1 (r1 y r2).
+# Evalúa la función en esa coordenada aleatoria (f_val). 
+# Si se busca maximizar y este nuevo valor es mayor que el mejor que se tenia (mejor_valor)
+# se actualiza y guarda las coordenadas (mejor_x, mejor_y).
 for i in range(n_iter):
     
     r1 = np.random.rand()
@@ -79,7 +84,7 @@ Z = f(X, Y)
 plt.figure()
 plt.axvline(mejor_x, color='cyan', linewidth=0.7, linestyle='--', alpha=0.5)
 plt.axhline(mejor_y, color='cyan', linewidth=0.7, linestyle='--', alpha=0.5)
-
+# Crea un mapa topográfico usando plt.contour. Las líneas representan alturas (valores de la función)
 plt.contour(X, Y, Z)
 plt.scatter(mejor_x, mejor_y)
 plt.title(f'$f(x,y) = {sp.latex(f_sym)}$')
@@ -105,7 +110,7 @@ Z = f(X, Y)
 
 fig = plt.figure(figsize=(8, 6))
 ax = fig.add_subplot(111, projection='3d')
-
+# se us plot_surface para dibujar el "terreno" tridimensional de la función.
 ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.8)
 
 ax.scatter(mejor_x, mejor_y, mejor_valor,

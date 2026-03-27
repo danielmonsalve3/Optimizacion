@@ -1,4 +1,4 @@
-# METODO DE NEWTON (OPTIMO)
+# METODO DE NEWTON RAICES
 import sympy as sp
 import numpy as np
 import matplotlib.pyplot as plt
@@ -6,58 +6,52 @@ import pandas as pd
 
 # INGRESO DE DATOS
 x = sp.symbols('x')
-# Toma el texto que ingresado (ej. x**2 + 3*x) y lo entiende como una ecuación matemática real.
+# el programa utiliza la librería sympy para interpretar la fórmula que escribes como texto.
 funcion_str = input("Ingrese la función f(x) (ej. x**3 - 6*x**2 + 9*x + 1): ")
-tipo = input("¿Desea maximizar o minimizar? (max/min): ")
-# Calcula automáticamente la primera derivada (f1_sym) y la segunda derivada (f2_sym) de la función.
+
 f_sym = sp.sympify(funcion_str)
+# el código solo necesita calcular la primera derivada de la función
 f1_sym = sp.diff(f_sym, x)
-f2_sym = sp.diff(f1_sym, x)
-# Convierte esas expresiones matemáticas teóricas en funciones numéricas
+# Usa lambdify para convertir la función original y su derivada en herramientas numéricas que la computadora pueda evaluar rápidamente
 f = sp.lambdify(x, f_sym, 'numpy')
 f1 = sp.lambdify(x, f1_sym, 'numpy')
-f2 = sp.lambdify(x, f2_sym, 'numpy')
 
 xi = float(input("Ingrese valor inicial xi: "))
 tol = float(input("Tolerancia: "))
 max_iter = int(input("Máximo número de iteraciones: "))
 
-# METODO NEWTON
+# METODO NEWTON PARA RAÍCES
+# este tiene un objetivo distinto: busca el punto exacto donde la función cruza el eje X (es decir, donde f(x) = 0).
 tabla = []
 errores = []
-# Busca el punto donde la primera derivada es cero (es decir, donde la pendiente es totalmente plana, lo que indica un máximo o un mínimo).
+# El código toma el valor inicial que le das (xi) y comienza un ciclo for que se repetirá hasta el límite de iteraciones que se definen (max_iter).
 for i in range(max_iter):
 
     fx = f(xi)
     fpx = f1(xi)
-    fppx = f2(xi)
 
-    tabla.append([i, xi, fx, fpx, fppx])
-
-    xi1 = xi - (fpx / fppx)
+    tabla.append([i, xi, fx, fpx])
+    # Aquí se divide la función original entre la primera derivada
+    xi1 = xi - (fx / fpx)
     error = abs(xi1 - xi)
     errores.append(error)
-
+    # El programa calcula la distancia entre el nuevo punto y el anterior
+    # Si esta diferencia es menor a tu tolerancia (tol), el bucle se detiene de inmediato usando break.
     if error < tol:
         break
 
     xi = xi1
 
 # TABLA
-df = pd.DataFrame(tabla, columns=["i", "x", "f(x)", "f'(x)", "f''(x)"])
-print("\n --- METODO DE NEWTON ---")
+df = pd.DataFrame(tabla, columns=["i", "x", "f(x)", "f'(x)"])
+print("\n --- METODO DE NEWTON RAICES ---")
 print("\nTabla de Iteraciones:")
 print(df)
 
 # Resultado
-x_opt = xi1
-print("\nPunto óptimo x =", x_opt)
-print("f(x) =", f(x_opt))
+x_raiz = xi1
+print("\nRaíz aproximada x =", x_raiz)
 
-if f2(x_opt) > 0:
-    print("Es un MÍNIMO")
-else:
-    print("Es un MÁXIMO")
 
 # GRAFICA ERROR VS ITERACIONES
 plt.figure(figsize=(8, 4))
@@ -81,27 +75,27 @@ plt.tight_layout()
 plt.show()
 
 # GRAFICA DE LA FUNCION
-x_vals = np.linspace(x_opt - 5, x_opt + 5, 400)
+x_vals = np.linspace(x_raiz - 5, x_raiz + 5, 400)
 y_vals = f(x_vals)
-y_opt  = f(x_opt)
+y_raiz = f(x_raiz)
 
 plt.figure(figsize=(8, 5))
 plt.plot(x_vals, y_vals, color='springgreen', linewidth=2, label='f(x)')
 
-plt.axvline(x_opt, color='gray', linestyle=':', linewidth=1)
-plt.axhline(y_opt,  color='gray', linestyle=':', linewidth=1)
+plt.axvline(x_raiz, color='gray', linestyle=':', linewidth=1)
+plt.axhline(0, color='gray', linestyle=':', linewidth=1)
 
-plt.scatter(x_opt, y_opt, color='crimson', zorder=5, s=70,
-            label=f'xopt = {x_opt:.4f}\nf(xopt) = {y_opt:.4f}')
+plt.scatter(x_raiz, y_raiz, color='crimson', zorder=5, s=70,
+            label=f'raíz = {x_raiz:.4f}\nf(raíz) ≈ {y_raiz:.4e}')
 
-plt.annotate(f'  ({x_opt:.3f}, {y_opt:.3f})',
-             xy=(x_opt, y_opt),
-             xytext=(x_opt + 0.3, y_opt + (max(y_vals) - min(y_vals)) * 0.05),
+plt.annotate(f'  ({x_raiz:.3f}, {y_raiz:.3e})',
+             xy=(x_raiz, y_raiz),
+             xytext=(x_raiz + 0.3, y_raiz + (max(y_vals) - min(y_vals)) * 0.05),
              fontsize=8, color='crimson')
 
 plt.xlabel("x")
 plt.ylabel("f(x)")
-plt.title("Función y punto óptimo")
+plt.title("Función y raíz aproximada")
 plt.legend(fontsize=8)
 plt.grid(True, linestyle='--', alpha=0.5)
 plt.tight_layout()

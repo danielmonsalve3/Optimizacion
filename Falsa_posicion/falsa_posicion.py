@@ -1,18 +1,22 @@
+# METODO DE FALSA POSICION
 import math
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sympy import symbols, sympify, lambdify
-
+# le pide al usuario que ingrese una función matemática como texto
 x = symbols('x')
 while True:
     funcion_str = input("Ingresa f(x) (ej. 4*x**4 - 9*x**2 + 1): ").strip()
     try:
-        expr = sympify(funcion_str)
+        # transforma ese texto en una expresión matemática abstracta.
+        expr = sympify(funcion_str) 
+        # convierte esa expresión abstracta en una función ejecutable real (f(x)) que puede procesar valores numéricos.
         f    = lambdify(x, expr, modules=['numpy', 'math'])
         _    = float(f(1))   # prueba de evaluación
         print(f"  → f(x) = {expr}")
         break
+    # captura el fallo y le pide que lo intente de nuevo sin detener el programa.
     except Exception as e:
         print(f"  ✗ Función inválida: {e}. Inténtalo de nuevo.")
 
@@ -35,7 +39,7 @@ def falsap(f, xl, xu, iteraciones=1000, error_r=0.00001, expr_str="f(x)"):
     historial_errores = []
     historial_iteraciones = []
     tabla_datos = []
-
+    # iterar hasta alcanzar el límite máximo o hasta que el error sea muy pequeño.
     while contador < iteraciones:
         contador += 1
 
@@ -57,7 +61,7 @@ def falsap(f, xl, xu, iteraciones=1000, error_r=0.00001, expr_str="f(x)"):
             historial_iteraciones.append(contador - 1)
         
         fila = {
-            'Iteración': contador, # Base 0 para que coincida con la imagen
+            'Iteración': contador, #
             'xl': xl,
             'xu': xu,
             'xr': xr,
@@ -82,6 +86,7 @@ def falsap(f, xl, xu, iteraciones=1000, error_r=0.00001, expr_str="f(x)"):
         xr_anterior = xr
 
     # Imprimir el resultado
+    print("\n--- METODO DE FALSA POSICION ---")
     print("\n--- Resultados ---")
     print("La raíz aproximada es: {:.6f}".format(xr))
     print("Encontrada en: {} iteraciones".format(contador))

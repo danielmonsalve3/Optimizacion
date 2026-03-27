@@ -1,5 +1,8 @@
+
+# METODO RAZON DORADA
 import math
 import matplotlib.pyplot as plt
+import sys
 
 
 # EVALUACIÓN DE FUNCIÓN
@@ -12,6 +15,7 @@ def evaluar_funcion(expr, x):
         "sqrt": math.sqrt, "pi": math.pi, "e": math.e
     }
     try:
+        # Toma el texto ingresado por el usuario y lo ejecuta como una operación matemática real
         return eval(expr, {"__builtins__": None}, entorno)
     except Exception as ex:
         print(f"Error al evaluar la función: {ex}")
@@ -37,7 +41,7 @@ def seccion_dorada(func_str, xl, xu, tipo_optimizacion, maxit=50, es=0.01):
         xopt, fx = (x1, f1) if f1 > f2 else (x2, f2)
     else:
         xopt, fx = (x1, f1) if f1 < f2 else (x2, f2)
-
+    # El ciclo while se detiene cuando el error aproximado (ea) es menor al deseado (es) o se alcanza el máximo de iteraciones.
     while True:
         d = R * d
 
@@ -81,7 +85,7 @@ def seccion_dorada(func_str, xl, xu, tipo_optimizacion, maxit=50, es=0.01):
 
 
 # TABLA DE ITERACIONES
-
+# Genera una tabla organizada en la consola que muestra cómo cambian los límites (xl, xu) y el error en cada paso.
 def imprimir_tabla(historial):
     encabezado = (
         f"{'Iter':>4} | {'xl':>10} | {'xu':>10} | "
@@ -106,7 +110,7 @@ def imprimir_tabla(historial):
 
 
 # GRÁFICA DE LA FUNCIÓN
-
+# Usa matplotlib para dibujar la curva de la función y marca con un punto rojo el valor óptimo encontrado.
 def graficar_funcion(func_str, xl_orig, xu_orig, xopt, fx):
     margen = (xu_orig - xl_orig) * 0.1
     xs = []
@@ -136,7 +140,7 @@ def graficar_funcion(func_str, xl_orig, xu_orig, xopt, fx):
 
 
 # GRÁFICA DE ERROR vs ITERACIONES
-
+# Muestra una curva del error descendiente
 def graficar_error(historial):
     iters  = [fila["iter"] for fila in historial]
     errores = [fila["ea"]  for fila in historial]
@@ -156,55 +160,51 @@ def graficar_error(historial):
 
 
 # PROGRAMA PRINCIPAL
+# Pide al usuario la función, si quiere maximizar o minimizar, los límites y el error permitido.
 
-def main():
-    print("─" * 50)
-    print("  MÉTODO DE BÚSQUEDA DE LA SECCIÓN DORADA")
-    print("─" * 50)
-    print("Usa 'x' como variable. Ejemplo: 2*sin(x) - (x**2/10)\n")
+print("─" * 50)
+print("  MÉTODO DE BÚSQUEDA DE LA SECCIÓN DORADA")
+print("─" * 50)
+print("Usa 'x' como variable. Ejemplo: 2*sin(x) - (x**2/10)\n")
 
-    func_str = input("Función f(x): ")
+func_str = input("Función f(x): ")
 
-    tipo = input("¿Maximizar (max) o minimizar (min)? ").strip().lower()
-    while tipo not in ['max', 'min']:
-        tipo = input("  Escribe 'max' o 'min': ").strip().lower()
+tipo = input("¿Maximizar (max) o minimizar (min)? ").strip().lower()
+while tipo not in ['max', 'min']:
+    tipo = input("  Escribe 'max' o 'min': ").strip().lower()
 
-    try:
-        xl    = float(input("Límite inferior (xl): "))
-        xu    = float(input("Límite superior (xu): "))
-        if xl >= xu:
-            print("Error: xl debe ser menor que xu.")
-            return
-        es    = float(input("Error esperado (%) [ej. 0.01]: "))
-        maxit = int(input("Máx. iteraciones [ej. 100]: "))
-    except ValueError:
-        print("Error: introduce valores numéricos válidos.")
-        return
+try:
+    xl    = float(input("Límite inferior (xl): "))
+    xu    = float(input("Límite superior (xu): "))
+    if xl >= xu:
+        print("Error: xl debe ser menor que xu.")
+        sys.exit()
+    es    = float(input("Error esperado (%) [ej. 0.01]: "))
+    maxit = int(input("Máx. iteraciones [ej. 100]: "))
+except ValueError:
+    print("Error: introduce valores numéricos válidos.")
+    sys.exit()
 
-    # Guardar límites originales para la gráfica
-    xl_orig, xu_orig = xl, xu
+# Guardar límites originales para la gráfica
+xl_orig, xu_orig = xl, xu
 
-    print()
-    xopt, fx, ea, iteraciones, historial = seccion_dorada(
-        func_str, xl, xu, tipo, maxit, es
-    )
+print()
+xopt, fx, ea, iteraciones, historial = seccion_dorada(
+    func_str, xl, xu, tipo, maxit, es
+)
 
-    # ── Resultado final ──
-    print("\n" + "─" * 40)
-    print(f"Resultado ({tipo}):")
-    print(f"  x óptimo   = {xopt:.6f}")
-    print(f"  f(xopt)    = {fx:.6f}")
-    print(f"  Error (ea) = {ea:.6f} %")
-    print(f"  Iteraciones = {iteraciones}")
-    print("─" * 40)
+# ── Resultado final ──
+print("\n" + "─" * 40)
+print(f"Resultado ({tipo}):")
+print(f"  x óptimo   = {xopt:.6f}")
+print(f"  f(xopt)    = {fx:.6f}")
+print(f"  Error (ea) = {ea:.6f} %")
+print(f"  Iteraciones = {iteraciones}")
+print("─" * 40)
 
-    # ── Tabla ──
-    imprimir_tabla(historial)
+# ── Tabla ──
+imprimir_tabla(historial)
 
-    # ── Gráficas ──
-    graficar_funcion(func_str, xl_orig, xu_orig, xopt, fx)
-    graficar_error(historial)
-
-
-if __name__ == "__main__":
-    main()
+# ── Gráficas ──
+graficar_funcion(func_str, xl_orig, xu_orig, xopt, fx)
+graficar_error(historial)
