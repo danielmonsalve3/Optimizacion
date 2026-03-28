@@ -18,10 +18,10 @@ f = sp.lambdify((x, y), f_sym, 'numpy')
 # En lugar de un solo intervalo, se pide definir un "rectángulo"
 # o área de búsqueda ingresando los límites mínimos y máximos tanto para x (xl, xu) como para y (yl, yu).
 # Rangos
-xl = float(input("Ingrese x mínimo: "))  # 0.5  
-xu = float(input("Ingrese x máximo: "))  # 1.5
-yl = float(input("Ingrese y mínimo: "))  # 1.5
-yu = float(input("Ingrese y máximo: "))  # 2.5
+xl = float(input("Ingrese x mínimo: "))  # 0.5      0   2.25*x*y + 1.75*y - 1.5*x**2 - 2*y**2
+xu = float(input("Ingrese x máximo: "))  # 1.5      1
+yl = float(input("Ingrese y mínimo: "))  # 1.5      0.5
+yu = float(input("Ingrese y máximo: "))  # 2.5      1.2
 # n_iter significa exactamente cuántos puntos aleatorios se quiere probar.
 n_iter = int(input("Número de iteraciones: "))
 

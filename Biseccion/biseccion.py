@@ -16,7 +16,7 @@ while True:
         print(f"  → f(x) = {expr}")
         break
     except Exception as e:
-        print(f"  ✗ Función inválida: {e}. Inténtalo de nuevo.")
+        print(f"  x Función inválida: {e}. Inténtalo de nuevo.")
 
 # Método de bisección con tabla
 def biseccion(f, xl, xu, tolerancia):
@@ -53,7 +53,7 @@ def biseccion(f, xl, xu, tolerancia):
 # Parámetros y ejecución 
 x_lower    = float(input("Ingrese el limite inferior: "))
 x_upper    =  float(input("Ingrese el limite superior: "))
-tolerancia =  0.000
+tolerancia =  0.0001
 
 raiz, tabla = biseccion(f, x_lower, x_upper, tolerancia)
 
